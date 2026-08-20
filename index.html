@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Inventario — Cafetería</title>
+
+<!-- Convierte esto en una "app" al agregarla a la pantalla de inicio en iPhone -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Inventario">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2C1B12">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADe0lEQVR4nO3dL68UVxyAYWj4BJXUoRFXtkHgSLAYEhQCiawAdXMVCCQSgSKpwTbBVZBW8gkq+zkqSMiG7pvZOzNn//V59MxvJ5s3c3aTnbM37/704w3Y5odDXwDHSxwkcZDEQRIHSRwkcZDEQRIHSRwkcZDEQRIHSRwkcZDEQRIHSRwkcZDEQRIHSRwkcZBuHfoCVnD/2cPlQ/549/vyIWfm5kk/1LRKFpskssmyQjrhOFa/bQyaebrO4TPH2Xjz+PaMs3797Z/Vr+QrcRyFeVlsnjsikRNeVhhNHIe35Lax7pDv7GNZWXLd4xZUJo2NY3nO4xZUJllWSAPjWHEVHLGgMslX2Wu4urgz+9zLL3+veCX7IY6dLMlic8JpJeIzB0kc05bfNkaM2gNxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBEgdJHCRxkMRBGhjHik8ibR01YqOVrTNX/FXw1lGrvFEepGavFm379OeXv3Y57POrR7Nf4t7Lj5PHvHh7NXv+N6+fX04e8+npk9nzH7z/MHnMvDdq8i365eLnGWNv7CcODmt2HJYVkjhI4iCJgyQOkjhI4iCd9t7nDOXOQRIHSRwkcZDEQRIHSRwkcZDEQRIHSRwkcZDEQRIHSRwkcZDEQRIHSRwkcZDEQRIHSRwkcZDEQRIH6Qz/rvzN49vLh4zYnO/knNWzsqtksel/nohlhXQ+cax+2xg084Sc4WeO87DLNp6z95DckTiOzu67u349clwi57OssDpxHJcZm0KP20d6f8vK1cWd5UNW/AMDJu0jjlWy2Bwlkf2wrJCGx7HibWPoTP7LV9n57j97uOT0Ef80tS5xzLEwi80hx5yIzxwkcVzbKreNQdPWJQ6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDNDyOEY8RbJ05YruErTPX/WHfd9NmPNvocUgOYNHmLdd6EO/T0yezX+ibB+8/TB7z+dWj5S907+XHyWNevL1a8hKvn18uOX13s28t+4uDQ5kdh2WFJA6SOEjiIImDJA6SOEhntYMx63LnIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEjiIImDJA6SOEj/AjbbjIjoGoj4AAAAAElFTkSuQmCC">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --cream:#F3EBDA;
+    --paper:#FBF6EA;
+    --espresso:#2C1B12;
+    --espresso-soft:#5B4636;
+    --amber:#B8722C;
+    --amber-deep:#8F5A22;
+    --sage:#6B7F5B;
+    --sage-deep:#4E5F43;
+    --rust:#AD4B34;
+    --line: rgba(44,27,18,0.14);
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Work Sans', -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body{
+    font-family: var(--font-body);
+    background: var(--cream);
+    background-image: radial-gradient(circle at 1px 1px, rgba(44,27,18,0.06) 1px, transparent 0);
+    background-size: 18px 18px;
+    color: var(--espresso);
+    min-height: 100vh;
+    padding: 28px 18px 60px;
+  }
+  .wrap{ max-width: 920px; margin: 0 auto; }
+
+  .hero{ text-align:center; margin-bottom: 28px; }
+  .hero .eyebrow{
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--amber-deep); margin-bottom: 6px;
+  }
+  .hero h1{
+    font-family: var(--font-display); font-weight: 600; font-size: clamp(28px, 5vw, 42px); margin: 0 0 6px;
+  }
+  .hero p{ margin:0; color: var(--espresso-soft); font-size: 14px; }
+
+  .summary-row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin: 22px 0 24px; }
+  .summary-card{
+    background: var(--espresso); color: var(--paper); border-radius: 10px;
+    padding: 12px 20px; min-width: 120px; text-align:center;
+  }
+  .summary-card.alert{ background: var(--rust); }
+  .summary-card .val{ font-family: var(--font-mono); font-size: 20px; font-weight: 600; }
+  .summary-card .lbl{
+    font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.75; margin-top: 2px;
+  }
+
+  .action-bar{ display:flex; justify-content:center; margin-bottom: 22px; }
+  .export-btn{
+    background: var(--paper); color: var(--espresso); border: 1px solid var(--espresso);
+    border-radius: 8px; padding: 9px 18px; font-family: var(--font-body); font-weight: 600;
+    font-size: 13px; cursor: pointer;
+  }
+  .export-btn:hover{ background: var(--espresso); color: var(--paper); }
+  .export-btn:disabled{ opacity: 0.5; cursor: default; }
+
+  .week-panel{
+    background: var(--paper); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 18px; margin-bottom: 26px;
+  }
+  .week-panel h2{
+    font-family: var(--font-display); font-size: 16px; font-weight: 600; margin: 0 0 12px; color: var(--espresso);
+  }
+  .week-list{ display:flex; gap: 10px; overflow-x:auto; padding-bottom: 4px; }
+  .week-card{
+    flex: 0 0 auto; min-width: 150px; background: var(--cream); border-radius: 10px;
+    padding: 10px 14px; border: 1px solid var(--line);
+  }
+  .week-card .range{
+    font-family: var(--font-body); font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--espresso-soft); margin-bottom: 4px;
+  }
+  .week-card .amount{ font-family: var(--font-mono); font-size: 17px; font-weight: 600; color: var(--espresso); }
+  .week-card .count{ font-size: 11px; color: var(--espresso-soft); margin-top: 2px; }
+
+  h2.section-title{
+    font-family: var(--font-display); font-size: 19px; font-weight: 600; margin: 0 0 14px; color: var(--espresso);
+  }
+
+  form.add-form{
+    background: var(--paper); border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px; display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+    gap: 10px; align-items:end; margin-bottom: 30px;
+    box-shadow: 0 1px 0 rgba(44,27,18,0.05);
+  }
+  .field{ display:flex; flex-direction:column; gap: 5px; }
+  .field label{
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--espresso-soft);
+  }
+  .field input{
+    font-family: var(--font-body); font-size: 14px; padding: 9px 10px;
+    border: 1px solid var(--line); border-radius: 7px; background: #fff; color: var(--espresso); width:100%;
+  }
+  .field input:focus{ outline: 2px solid var(--amber); outline-offset: 1px; }
+  .add-form button{
+    background: var(--espresso); color: var(--paper); border: none; border-radius: 7px;
+    padding: 10px 18px; font-family: var(--font-body); font-weight: 600; font-size: 13px;
+    cursor: pointer; height: 38px;
+  }
+  .add-form button:hover{ background: var(--amber-deep); }
+
+  .tickets{ display:grid; grid-template-columns: repeat(auto-fill, minmax(250px,1fr)); gap: 18px; margin-bottom: 40px; }
+
+  .ticket{
+    position:relative; background: var(--paper); border-radius: 4px;
+    padding: 18px 16px 16px; box-shadow: 0 2px 6px rgba(44,27,18,0.10); border-top: 3px dashed var(--line);
+  }
+  .ticket::before{
+    content:""; position:absolute; top:-7px; left:0; right:0; height:14px;
+    background-image: radial-gradient(circle 7px at 12px 0, transparent 7px, var(--cream) 7.5px);
+    background-repeat: repeat-x; background-size: 24px 14px; background-position: -4px -7px;
+  }
+  .ticket.ok{ border-top-color: var(--sage); }
+  .ticket.bajo{ border-top-color: var(--amber); }
+  .ticket.agotado{ border-top-color: var(--rust); }
+
+  .ticket-name{
+    font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--espresso);
+    margin-bottom: 8px; line-height:1.2; padding-right: 18px;
+  }
+
+  .stock-badge{
+    display:flex; align-items:baseline; justify-content:space-between;
+    font-family: var(--font-mono); font-size: 13px; margin-bottom: 4px;
+  }
+  .stock-badge .qty{ font-weight: 600; font-size: 17px; }
+  .stock-badge.ok .qty{ color: var(--sage-deep); }
+  .stock-badge.bajo .qty{ color: var(--amber-deep); }
+  .stock-badge.agotado .qty{ color: var(--rust); }
+
+  .stock-bar-track{
+    height: 6px; background: var(--cream); border-radius: 3px; overflow:hidden; margin-bottom: 10px;
+  }
+  .stock-bar-fill{ height:100%; border-radius: 3px; }
+  .stock-bar-fill.ok{ background: var(--sage); }
+  .stock-bar-fill.bajo{ background: var(--amber); }
+  .stock-bar-fill.agotado{ background: var(--rust); }
+
+  .alert-note{
+    font-family: var(--font-body); font-size: 11px; font-weight: 600; margin-bottom: 10px;
+  }
+  .alert-note.bajo{ color: var(--amber-deep); }
+  .alert-note.agotado{ color: var(--rust); }
+
+  .ticket-row{
+    display:flex; justify-content:space-between; font-size: 11.5px; font-family: var(--font-mono);
+    color: var(--espresso-soft); padding: 3px 0; border-bottom: 1px dotted var(--line);
+  }
+  .ticket-row span:last-child{ color: var(--espresso); font-weight: 600; }
+
+  .action-row{ display:flex; gap: 6px; margin-top: 10px; }
+  .action-row input{
+    width: 100%; font-family: var(--font-mono); font-size: 12.5px; padding: 7px 8px;
+    border: 1px solid var(--line); border-radius: 6px; background:#fff; color: var(--espresso);
+  }
+  .action-row button{
+    flex: 0 0 auto; font-family: var(--font-body); font-size: 11.5px; font-weight: 600;
+    padding: 7px 10px; border-radius: 6px; border: none; cursor:pointer; white-space:nowrap;
+  }
+  .action-row.compra button{ background: var(--sage); color: #fff; }
+  .action-row.compra button:hover{ background: var(--sage-deep); }
+  .action-row.uso button{ background: var(--espresso); color: var(--paper); }
+  .action-row.uso button:hover{ background: var(--amber-deep); }
+  .action-label{
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--espresso-soft); margin: 10px 0 4px;
+  }
+
+  .del-btn{
+    position:absolute; top: 12px; right: 10px; background: none; border: none;
+    color: var(--line); font-size: 16px; cursor: pointer; line-height:1; font-family: var(--font-body);
+  }
+  .del-btn:hover{ color: var(--rust); }
+
+  .day-group{ margin-bottom: 20px; }
+  .day-header{
+    display:flex; align-items:baseline; gap: 10px; margin-bottom: 8px;
+    padding-bottom: 6px; border-bottom: 1px solid var(--line);
+  }
+  .day-header .day-label{
+    font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--espresso);
+    text-transform: capitalize;
+  }
+  .day-header .day-total{ font-family: var(--font-mono); font-size: 12px; color: var(--espresso-soft); margin-left: auto; }
+  .hist-row{
+    display:flex; justify-content:space-between; gap: 10px; font-size: 12.5px;
+    padding: 6px 0; border-bottom: 1px dotted var(--line);
+  }
+  .hist-row .hist-main{ color: var(--espresso); }
+  .hist-row .hist-tag{
+    font-family: var(--font-mono); font-size: 10.5px; padding: 1px 7px; border-radius: 10px;
+    align-self:flex-start;
+  }
+  .hist-row .hist-tag.compra{ background: rgba(107,127,91,0.18); color: var(--sage-deep); }
+  .hist-row .hist-tag.uso{ background: rgba(44,27,18,0.08); color: var(--espresso-soft); }
+  .hist-row .hist-amount{ font-family: var(--font-mono); color: var(--espresso-soft); white-space:nowrap; }
+
+  .empty-state{ text-align:center; padding: 40px 20px; color: var(--espresso-soft); }
+  .empty-state .icon{ font-size: 28px; margin-bottom: 8px; }
+  .status-msg{
+    text-align:center; padding: 60px 20px; color: var(--espresso-soft); font-family: var(--font-mono); font-size: 13px;
+  }
+  .error-msg{ color: var(--rust); font-size: 12px; margin-bottom: 14px; text-align:center; }
+
+  @media (max-width: 700px){
+    form.add-form{ grid-template-columns: 1fr 1fr; }
+    form.add-form .field:first-child{ grid-column: 1 / -1; }
+    .add-form button{ grid-column: 1/-1; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="eyebrow">Cafetería · Inventario</div>
+      <h1>Mi Inventario</h1>
+      <p>Cuánto tienes, cuánto compraste, cuánto gastaste y cuándo se te está acabando.</p>
+    </div>
+
+    <div class="summary-row" id="summary-row"></div>
+
+    <div class="action-bar">
+      <button id="export-btn" class="export-btn">⬇ Exportar a Excel</button>
+    </div>
+
+    <div class="week-panel" id="week-panel" style="display:none;">
+      <h2>Resumen semanal</h2>
+      <div class="week-list" id="week-list"></div>
+    </div>
+
+    <h2 class="section-title">Añadir producto</h2>
+    <form class="add-form" id="add-form">
+      <div class="field">
+        <label for="nombre">Producto</label>
+        <input id="nombre" type="text" placeholder="Ej: Granos de café" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="unidad">Unidad</label>
+        <input id="unidad" type="text" placeholder="Ej: kg" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="stockInicial">Stock inicial</label>
+        <input id="stockInicial" type="number" step="0.01" placeholder="0">
+      </div>
+      <div class="field">
+        <label for="stockMinimo">Alerta si baja de</label>
+        <input id="stockMinimo" type="number" step="0.01" placeholder="Ej: 2">
+      </div>
+      <div class="field">
+        <label for="costoRef">Costo (x unidad, o total si es ml/gr)</label>
+        <input id="costoRef" type="number" step="0.01" placeholder="S/ 0.00">
+      </div>
+      <button type="submit">Añadir</button>
+    </form>
+
+    <div id="error-container"></div>
+
+    <h2 class="section-title">Productos</h2>
+    <div id="tickets-container">
+      <div class="status-msg">Preparando tu inventario...</div>
+    </div>
+
+    <div id="historial-section" style="display:none;">
+      <h2 class="section-title">Historial de movimientos</h2>
+      <div id="historial-container"></div>
+    </div>
+  </div>
+
+<script>
+  const STORAGE_KEY = "cafeteria-inventario-v2";
+  let productos = [];
+  let loaded = false;
+
+  function fmtMoney(n){
+    const num = Number(n);
+    if (Number.isNaN(num) || n === "" || n === null || n === undefined) return "—";
+    return "S/ " + num.toFixed(2);
+  }
+
+  function fmtQty(n){
+    const num = Number(n);
+    if (Number.isNaN(num)) return "0";
+    return (Math.round(num * 100) / 100).toString();
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function todayStr(){
+    const d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+
+  function dayLabel(dateStr){
+    const today = todayStr();
+    const d = new Date(dateStr + "T00:00:00");
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yStr = yesterday.getFullYear() + "-" + String(yesterday.getMonth()+1).padStart(2,"0") + "-" + String(yesterday.getDate()).padStart(2,"0");
+    if (dateStr === today) return "Hoy";
+    if (dateStr === yStr) return "Ayer";
+    return d.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long" });
+  }
+
+  function mondayOf(dateStr){
+    const d = new Date(dateStr + "T00:00:00");
+    const day = d.getDay();
+    const diff = (day === 0 ? -6 : 1 - day);
+    d.setDate(d.getDate() + diff);
+    return d;
+  }
+
+  function weekKeyOf(dateStr){
+    const m = mondayOf(dateStr);
+    return m.getFullYear() + "-" + String(m.getMonth()+1).padStart(2,"0") + "-" + String(m.getDate()).padStart(2,"0");
+  }
+
+  function weekRangeLabel(weekKey){
+    const start = new Date(weekKey + "T00:00:00");
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    const startStr = start.toLocaleDateString("es-PE", { day: "numeric", month: "short" });
+    const endStr = end.toLocaleDateString("es-PE", { day: "numeric", month: "short" });
+    return startStr + " – " + endStr;
+  }
+
+  function monthKeyOf(dateStr){
+    return dateStr.slice(0,7); // YYYY-MM
+  }
+
+  function monthLabel(monthKey){
+    const d = new Date(monthKey + "-01T00:00:00");
+    const label = d.toLocaleDateString("es-PE", { month: "long", year: "numeric" });
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  }
+
+  // Unidades donde el costo ingresado se toma como TOTAL de la compra (no se multiplica por cantidad)
+  const UNIDADES_COSTO_TOTAL = ["ml", "mls", "mililitro", "mililitros", "gr", "gramo", "gramos", "g"];
+
+  function esUnidadCostoTotal(unidad){
+    const u = (unidad || "").trim().toLowerCase();
+    return UNIDADES_COSTO_TOTAL.includes(u);
+  }
+
+  function statusOf(p){
+    if (Number(p.stock) <= 0) return "agotado";
+    if (Number(p.stockMinimo) > 0 && Number(p.stock) <= Number(p.stockMinimo)) return "bajo";
+    return "ok";
+  }
+
+  function loadProductos(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      productos = raw ? JSON.parse(raw) : [];
+    }catch(e){
+      productos = [];
+    }
+    loaded = true;
+    render();
+  }
+
+  function persist(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(productos));
+      showError("");
+    }catch(e){
+      showError("No se pudo guardar. Intenta de nuevo.");
+    }
+  }
+
+  function showError(msg){
+    const c = document.getElementById("error-container");
+    c.innerHTML = msg ? '<div class="error-msg">' + escapeHtml(msg) + '</div>' : "";
+  }
+
+  function addProducto(nombre, unidad, stockInicial, stockMinimo, costoRef){
+    const stock = Number(stockInicial) || 0;
+    const historial = [];
+    if (stock > 0){
+      const costoIngresado = Number(costoRef) || 0;
+      const esTotal = esUnidadCostoTotal(unidad);
+      const costoTotal = esTotal ? costoIngresado : costoIngresado * stock;
+      const costoUnit = esTotal ? (stock > 0 ? costoTotal / stock : 0) : costoIngresado;
+      historial.push({ id: cryptoId(), fecha: todayStr(), tipo: "compra", cantidad: stock, costoUnitario: costoUnit, costo: costoTotal });
+    }
+    productos.unshift({
+      id: cryptoId(),
+      nombre, unidad: unidad || "unid.",
+      stock,
+      stockMinimo: Number(stockMinimo) || 0,
+      costoRef: costoRef === "" ? "" : Number(costoRef),
+      historial
+    });
+    persist();
+    render();
+  }
+
+  function cryptoId(){
+    return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  }
+
+  function registrarCompra(id, cantidad, costoIngresado){
+    const p = productos.find(x => x.id === id);
+    if (!p) return;
+    const cant = Number(cantidad);
+    if (!cant || cant <= 0) return;
+    const costo = Number(costoIngresado) || 0;
+    const esTotal = esUnidadCostoTotal(p.unidad);
+    const costoTotal = esTotal ? costo : costo * cant;
+    const costoUnit = esTotal ? (cant > 0 ? costoTotal / cant : 0) : costo;
+    p.stock = (Number(p.stock) || 0) + cant;
+    p.historial.unshift({ id: cryptoId(), fecha: todayStr(), tipo: "compra", cantidad: cant, costoUnitario: costoUnit, costo: costoTotal });
+    persist();
+    render();
+  }
+
+  function registrarUso(id, cantidad){
+    const p = productos.find(x => x.id === id);
+    if (!p) return;
+    const cant = Number(cantidad);
+    if (!cant || cant <= 0) return;
+    p.stock = Math.max(0, (Number(p.stock) || 0) - cant);
+    p.historial.unshift({ id: cryptoId(), fecha: todayStr(), tipo: "uso", cantidad: cant });
+    persist();
+    render();
+  }
+
+  function deleteProducto(id){
+    productos = productos.filter(p => p.id !== id);
+    persist();
+    render();
+  }
+
+  function renderSummary(){
+    const totalGastado = productos.reduce((sum, p) =>
+      sum + p.historial.filter(h => h.tipo === "compra").reduce((s,h) => s + (Number(h.costo)||0), 0), 0);
+    const bajo = productos.filter(p => statusOf(p) === "bajo").length;
+    const agotado = productos.filter(p => statusOf(p) === "agotado").length;
+    document.getElementById("summary-row").innerHTML = `
+      <div class="summary-card"><div class="val">${productos.length}</div><div class="lbl">Productos</div></div>
+      <div class="summary-card ${bajo + agotado > 0 ? 'alert' : ''}"><div class="val">${bajo + agotado}</div><div class="lbl">Necesitan reposición</div></div>
+      <div class="summary-card"><div class="val">${fmtMoney(totalGastado)}</div><div class="lbl">Gastado en total</div></div>
+    `;
+  }
+
+  function renderWeekPanel(){
+    const panel = document.getElementById("week-panel");
+    const list = document.getElementById("week-list");
+    const compras = [];
+    productos.forEach(p => p.historial.forEach(h => { if (h.tipo === "compra") compras.push(h); }));
+    if (compras.length === 0){ panel.style.display = "none"; return; }
+    const weeks = {};
+    compras.forEach(h => {
+      const wk = weekKeyOf(h.fecha);
+      if (!weeks[wk]) weeks[wk] = { total: 0, count: 0 };
+      weeks[wk].total += Number(h.costo) || 0;
+      weeks[wk].count += 1;
+    });
+    const weekKeys = Object.keys(weeks).sort((a,b) => b.localeCompare(a));
+    panel.style.display = "";
+    list.innerHTML = weekKeys.map(wk => `
+      <div class="week-card">
+        <div class="range">${weekRangeLabel(wk)}</div>
+        <div class="amount">${fmtMoney(weeks[wk].total)}</div>
+        <div class="count">${weeks[wk].count} compra${weeks[wk].count === 1 ? "" : "s"}</div>
+      </div>
+    `).join("");
+  }
+
+  function ticketHtml(p){
+    const status = statusOf(p);
+    const pct = p.stockMinimo > 0
+      ? Math.max(4, Math.min(100, (Number(p.stock) / (Number(p.stockMinimo) * 2)) * 100))
+      : (Number(p.stock) > 0 ? 100 : 4);
+    const alertText = status === "agotado" ? "⚠ Agotado — hay que comprar"
+      : status === "bajo" ? "⚠ Se está acabando" : "";
+    return `
+      <div class="ticket ${status}" data-id="${p.id}">
+        <button class="del-btn" data-action="delete" data-id="${p.id}" title="Eliminar" aria-label="Eliminar producto">✕</button>
+        <div class="ticket-name">${escapeHtml(p.nombre)}</div>
+        <div class="stock-badge ${status}">
+          <span class="qty">${fmtQty(p.stock)} ${escapeHtml(p.unidad)}</span>
+          <span>en stock</span>
+        </div>
+        <div class="stock-bar-track"><div class="stock-bar-fill ${status}" style="width:${pct}%"></div></div>
+        ${alertText ? `<div class="alert-note ${status}">${alertText}</div>` : ""}
+        ${p.stockMinimo > 0 ? `<div class="ticket-row"><span>Alerta si baja de</span><span>${fmtQty(p.stockMinimo)} ${escapeHtml(p.unidad)}</span></div>` : ""}
+
+        <div class="action-label">Registrar compra</div>
+        <div class="action-row compra">
+          <input type="number" step="0.01" placeholder="Cantidad" id="compra-cant-${p.id}">
+          <input type="number" step="0.01" placeholder="${esUnidadCostoTotal(p.unidad) ? 'Costo total' : 'Costo x unidad'}" id="compra-costo-${p.id}">
+          <button data-action="comprar" data-id="${p.id}">+ Sumar</button>
+        </div>
+
+        <div class="action-label">Registrar uso</div>
+        <div class="action-row uso">
+          <input type="number" step="0.01" placeholder="Cantidad usada" id="uso-cant-${p.id}">
+          <button data-action="usar" data-id="${p.id}">− Restar</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderTickets(){
+    const container = document.getElementById("tickets-container");
+    if (!loaded){
+      container.innerHTML = '<div class="status-msg">Preparando tu inventario...</div>';
+      return;
+    }
+    if (productos.length === 0){
+      container.innerHTML = '<div class="empty-state"><div class="icon">☕</div><div>Aún no has agregado productos. Empieza arriba.</div></div>';
+      return;
+    }
+    const sorted = [...productos].sort((a,b) => {
+      const order = { agotado: 0, bajo: 1, ok: 2 };
+      return order[statusOf(a)] - order[statusOf(b)];
+    });
+    container.innerHTML = '<div class="tickets">' + sorted.map(ticketHtml).join("") + '</div>';
+  }
+
+  function renderHistorial(){
+    const section = document.getElementById("historial-section");
+    const container = document.getElementById("historial-container");
+    const entries = [];
+    productos.forEach(p => p.historial.forEach(h => entries.push({ ...h, producto: p.nombre, unidad: p.unidad })));
+    if (entries.length === 0){ section.style.display = "none"; return; }
+    section.style.display = "";
+
+    const groups = {};
+    entries.forEach(e => {
+      if (!groups[e.fecha]) groups[e.fecha] = [];
+      groups[e.fecha].push(e);
+    });
+    const dateKeys = Object.keys(groups).sort((a,b) => b.localeCompare(a));
+
+    container.innerHTML = dateKeys.map(dateKey => {
+      const dayEntries = groups[dateKey];
+      const dayTotal = dayEntries.filter(e => e.tipo === "compra").reduce((s,e) => s + (Number(e.costo)||0), 0);
+      return `
+        <div class="day-group">
+          <div class="day-header">
+            <span class="day-label">${dayLabel(dateKey)}</span>
+            <span class="day-total">${dayTotal > 0 ? "Gastado: " + fmtMoney(dayTotal) : ""}</span>
+          </div>
+          ${dayEntries.map(e => `
+            <div class="hist-row">
+              <div>
+                <span class="hist-tag ${e.tipo}">${e.tipo === "compra" ? "Compra" : "Uso"}</span>
+                <span class="hist-main"> ${escapeHtml(e.producto)}</span>
+              </div>
+              <div class="hist-amount">
+                ${fmtQty(e.cantidad)} ${escapeHtml(e.unidad)}${e.tipo === "compra" ? (esUnidadCostoTotal(e.unidad) ? " · Total " + fmtMoney(e.costo) : " · " + fmtMoney(e.costoUnitario) + " c/u · Total " + fmtMoney(e.costo)) : ""}
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }).join("");
+  }
+
+  function render(){
+    renderSummary();
+    renderWeekPanel();
+    renderTickets();
+    renderHistorial();
+  }
+
+  function exportToExcel(){
+    if (productos.length === 0){
+      showError("Añade al menos un producto antes de exportar.");
+      return;
+    }
+
+    // --- Hoja: Inventario actual ---
+    const inventarioRows = productos.map(p => ({
+      "Producto": p.nombre,
+      "Unidad": p.unidad,
+      "Stock actual": Number(p.stock) || 0,
+      "Alerta si baja de": Number(p.stockMinimo) || 0,
+      "Estado": statusOf(p) === "ok" ? "OK" : statusOf(p) === "bajo" ? "Bajo stock" : "Agotado"
+    }));
+
+    // --- Flatten historial ---
+    const entries = [];
+    productos.forEach(p => p.historial.forEach(h => entries.push({ ...h, producto: p.nombre, unidad: p.unidad })));
+    entries.sort((a,b) => a.fecha.localeCompare(b.fecha));
+
+    // --- Hoja: Historial detallado ---
+    const historialRows = entries.map(e => ({
+      "Fecha": e.fecha,
+      "Producto": e.producto,
+      "Movimiento": e.tipo === "compra" ? "Compra" : "Uso",
+      "Cantidad": Number(e.cantidad) || 0,
+      "Unidad": e.unidad,
+      "Costo unitario (S/)": e.tipo === "compra" ? (Number(e.costoUnitario) || 0) : "",
+      "Costo total (S/)": e.tipo === "compra" ? (Number(e.costo) || 0) : ""
+    }));
+
+    // --- Hoja: Resumen semanal ---
+    const weeks = {};
+    entries.filter(e => e.tipo === "compra").forEach(e => {
+      const wk = weekKeyOf(e.fecha);
+      if (!weeks[wk]) weeks[wk] = { total: 0, count: 0 };
+      weeks[wk].total += Number(e.costo) || 0;
+      weeks[wk].count += 1;
+    });
+    const weekRows = Object.keys(weeks).sort().map(wk => ({
+      "Semana": weekRangeLabel(wk),
+      "Total gastado (S/)": Number(weeks[wk].total.toFixed(2)),
+      "N° de compras": weeks[wk].count
+    }));
+
+    // --- Hoja: Resumen mensual ---
+    const months = {};
+    entries.filter(e => e.tipo === "compra").forEach(e => {
+      const mk = monthKeyOf(e.fecha);
+      if (!months[mk]) months[mk] = { total: 0, count: 0 };
+      months[mk].total += Number(e.costo) || 0;
+      months[mk].count += 1;
+    });
+    const monthRows = Object.keys(months).sort().map(mk => ({
+      "Mes": monthLabel(mk),
+      "Total gastado (S/)": Number(months[mk].total.toFixed(2)),
+      "N° de compras": months[mk].count
+    }));
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(inventarioRows), "Inventario actual");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(weekRows.length ? weekRows : [{ "Semana": "Sin compras registradas" }]), "Resumen semanal");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(monthRows.length ? monthRows : [{ "Mes": "Sin compras registradas" }]), "Resumen mensual");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(historialRows.length ? historialRows : [{ "Fecha": "Sin movimientos registrados" }]), "Historial detallado");
+
+    const fileDate = todayStr();
+    XLSX.writeFile(wb, `inventario-cafeteria-${fileDate}.xlsx`);
+  }
+
+  document.getElementById("export-btn").addEventListener("click", exportToExcel);
+
+  document.getElementById("add-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const nombre = document.getElementById("nombre").value.trim();
+    const unidad = document.getElementById("unidad").value.trim();
+    const stockInicial = document.getElementById("stockInicial").value.trim();
+    const stockMinimo = document.getElementById("stockMinimo").value.trim();
+    const costoRef = document.getElementById("costoRef").value.trim();
+    if (!nombre) return;
+    addProducto(nombre, unidad, stockInicial, stockMinimo, costoRef);
+    document.getElementById("nombre").value = "";
+    document.getElementById("unidad").value = "";
+    document.getElementById("stockInicial").value = "";
+    document.getElementById("stockMinimo").value = "";
+    document.getElementById("costoRef").value = "";
+    document.getElementById("nombre").focus();
+  });
+
+  document.getElementById("tickets-container").addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    const id = btn.dataset.id;
+    const action = btn.dataset.action;
+    if (action === "delete") deleteProducto(id);
+    if (action === "comprar"){
+      const cant = document.getElementById("compra-cant-" + id).value;
+      const costo = document.getElementById("compra-costo-" + id).value;
+      registrarCompra(id, cant, costo);
+    }
+    if (action === "usar"){
+      const cant = document.getElementById("uso-cant-" + id).value;
+      registrarUso(id, cant);
+    }
+  });
+
+  loadProductos();
+</script>
+</body>
+</html>
